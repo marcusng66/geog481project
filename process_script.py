@@ -15,9 +15,15 @@ def getCropType(file_path):
     file_split = file_path.split("/")
     return file_split[len(file_split)-1].split("_")[0]
 
-# WIP
-def calculate_moving_window():
-    pass
+# Calculate moving window average? might not be needed? WIP WIP WIP WIP WIP
+def calculate_moving_window(values):
+    curr_index = 0
+    moving_averages = []
+    while (curr_index+2 != len(values)):
+        average = ((values[curr_index] + values[curr_index + 1] + values[curr_index+2])/3)
+        moving_averages.append(round(average, 5))
+        curr_index += 1
+    return moving_averages
 
 # Function to calculate the amount of stuff per week (data is no longer accumulated)
 def calculate_accum(raw_value_arrays):
@@ -33,6 +39,7 @@ def calculate_accum(raw_value_arrays):
             weekly_accumulation.append(round(accumulated_values, 5))
             count += 1
         master_array.append(weekly_accumulation)
+        # master_array.append(calculate_moving_window(weekly_accumulation))
     return master_array
         
 #Function to build rows for csv input
@@ -53,6 +60,7 @@ def calculate_accumulations(file_path):
         reader = csv.reader(csvfile, delimiter=' ', quotechar='|')
         headers = next(reader)
         headers = headers[0].split(",")
+        # headers = fix_headers(headers)
         row_number = 1
         # Breakdown each row and isolate each specific case
         for row in reader:
@@ -87,11 +95,10 @@ def calculate_accumulations(file_path):
                 count += 1
             all_accumulated_values.extend((pcpn_values, egdd_values, heat_values, frst_values, avsi_values, prcn_values))
             all_accums = calculate_accum(all_accumulated_values)
-            if "-999" not in misc_values:
+            if "-1" not in misc_values:
                 row_builder(misc_values, all_accums, ndvi_values)
                 print("Row #", row_number, " Built")
                 row_number += 1
-
         #Seperate all rows into their respective years
         curr_year = all_new_rows[0][0]
         crop_type = getCropType(file_path)
@@ -107,6 +114,7 @@ def calculate_accumulations(file_path):
         write(file_name, headers, curr_year_rows)
 
 file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/CANOLA_TEST.csv"
+# file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/Data_to_Winston/CCYF_inputs/Oct/AVHRR-Accumulated/CANOLA_AVHRR-Accumulated_CCYF_Input_1987-2020_Oct_Canada_Imperial.csv"
 calculate_accumulations(file_path)
 
 
