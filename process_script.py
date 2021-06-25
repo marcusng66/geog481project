@@ -1,6 +1,6 @@
 import csv
-
 all_new_rows = []
+new_headers = []
 
 # Function to write all the built rows into a new csv file (will overwrite, does not accumulate)
 def write(file_name, headers, curr_year_rows):
@@ -10,6 +10,16 @@ def write(file_name, headers, curr_year_rows):
         for row in curr_year_rows:
             writer.writerow(row)
     print("Successfully Wrote Rows into CSV")
+
+def fix_headers(headers):
+    new_headers.extend(headers[0:4])
+    valid_labels = ["SumPcpn", "SumEGDD_C", "SumHeatD", "SumFrostD", "AvgSI", "AvgPrcnAWHC", "NDVI"]
+    for labels in valid_labels:
+        for i in range(18, 37):
+            new_headers.append("{0}{1}_{2}".format(labels, i, i+2))
+    new_headers.append("NDVI_MAX")
+    return new_headers
+    
 
 def getCropType(file_path):
     file_split = file_path.split("/")
@@ -60,7 +70,7 @@ def calculate_accumulations(file_path):
         reader = csv.reader(csvfile, delimiter=' ', quotechar='|')
         headers = next(reader)
         headers = headers[0].split(",")
-        # headers = fix_headers(headers)
+        fix_headers(headers)
         row_number = 1
         # Breakdown each row and isolate each specific case
         for row in reader:
@@ -77,17 +87,29 @@ def calculate_accumulations(file_path):
             misc_values = [] # all misc values
             for header in headers:
                 if "SumPcpn" in header:
-                    pcpn_values.append(float(split_row[count]))
+                    check_head = header.split("_")[1]
+                    if int(check_head) > 17 and int(check_head) < 37:
+                        pcpn_values.append(float(split_row[count]))
                 elif "SumEGDD_C" in header:
-                    egdd_values.append(float(split_row[count]))
+                    check_head = header.split("_")[2]
+                    if int(check_head) > 17 and int(check_head) < 37:
+                        egdd_values.append(float(split_row[count]))
                 elif "SumHeatD" in header:
-                    heat_values.append(float(split_row[count]))
+                    check_head = header.split("_")[1]
+                    if int(check_head) > 17 and int(check_head) < 37:
+                        heat_values.append(float(split_row[count]))
                 elif "SumFrostD" in header:
-                    frst_values.append(float(split_row[count]))
+                    check_head = header.split("_")[1]
+                    if int(check_head) > 17 and int(check_head) < 37:
+                        frst_values.append(float(split_row[count]))
                 elif "AvgSI" in header:
-                    avsi_values.append(float(split_row[count]))
+                    check_head = header.split("_")[1]
+                    if int(check_head) > 17 and int(check_head) < 37:
+                        avsi_values.append(float(split_row[count]))
                 elif "AvgPrcnAWHC" in header:
-                    prcn_values.append(float(split_row[count]))
+                    check_head = header.split("_")[1]
+                    if int(check_head) > 17 and int(check_head) < 37:
+                        prcn_values.append(float(split_row[count]))
                 elif "NDVI" in header:
                     ndvi_values.append(float(split_row[count]))
                 else: 
@@ -95,7 +117,7 @@ def calculate_accumulations(file_path):
                 count += 1
             all_accumulated_values.extend((pcpn_values, egdd_values, heat_values, frst_values, avsi_values, prcn_values))
             all_accums = calculate_accum(all_accumulated_values)
-            if "-1" not in misc_values:
+            if "-999" not in misc_values:
                 row_builder(misc_values, all_accums, ndvi_values)
                 print("Row #", row_number, " Built")
                 row_number += 1
@@ -106,12 +128,12 @@ def calculate_accumulations(file_path):
         curr_year_rows = []
         for rows in all_new_rows:
             if not rows[0] == curr_year:
-                write(file_name, headers, curr_year_rows)
+                write(file_name, new_headers, curr_year_rows)
                 curr_year = rows[0]
                 file_name = "CANOLA_{0}.csv".format(curr_year)
                 curr_year_rows = []
             curr_year_rows.append(rows)
-        write(file_name, headers, curr_year_rows)
+        write(file_name, new_headers, curr_year_rows)
 
 file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/CANOLA_TEST.csv"
 # file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/Data_to_Winston/CCYF_inputs/Oct/AVHRR-Accumulated/CANOLA_AVHRR-Accumulated_CCYF_Input_1987-2020_Oct_Canada_Imperial.csv"
