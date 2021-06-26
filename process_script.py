@@ -196,14 +196,14 @@ def process_data(file_path, filtertype):
                 organized_values.extend([pcpn_values, egdd_values, heat_values, frst_values, avsi_values, prcn_values])
                 for arrays in organized_values:
                     moving_averages.append(calculate_moving_window(arrays))
-            if "-999" not in misc_values:
+            if "-999.0" not in misc_values:
                 row_builder(misc_values, moving_averages, ndvi_values)
                 print("Row #", row_number, " Built")
                 row_number += 1
         determine_filter(filtertype, crop_type, filetype, new_headers)
 
 # file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/Barley_BaselineTest.csv"
-file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/CANOLA_Accumulated.csv"
+file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/CANOLA_AVHRR-Accumulated_CCYF_Input_1987-2020_Oct_Canada_Imperial.csv"
 process_data(file_path, filtertype)
 
   
