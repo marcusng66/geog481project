@@ -3,7 +3,8 @@ import csv
 #IMPORTANT
 #-----------------------------------------
 
-# FILE NAME REQUIRES {croptype}_{Accumulated or Baseline}
+# FILE NAME MUST BEGIN WITH THE {CROPTYPE} FOLLOWED BY THE {ACCUMULATED OR BASELINE} THEN ANYTHING AFTER WITH A CSV EXTENSION
+# EXAMPLE - CANOLA_AccumulatedTest.csv
 # CURRENTLY NEED TO CHANGE {filtertype} WITHIN THE FILE, WILL FIND ANOTHER WAY IF NEEDED
 # FILE_PATH IS ALSO CHANGED IN FILE, CAN MAKE INPUT IF NEEDED
 
@@ -125,7 +126,7 @@ def process_data(file_path, filtertype):
             prcn_values = [] # all prcn values
             ndvi_values = [] # all ndvi values
             misc_values = [] # all misc values
-            if "Accumulated" in file_path:
+            if "Accumulated".lower() in file_path.lower():
                 filetype = "Accumulated"
                 for header in headers:
                     if "SumPcpn" in header:
@@ -160,7 +161,7 @@ def process_data(file_path, filtertype):
                 organized_values.extend([pcpn_values, egdd_values, heat_values, frst_values])
                 moving_averages = calculate_accum(organized_values)
                 moving_averages.extend((calculate_moving_window(avsi_values), calculate_moving_window(prcn_values)))
-            elif "Baseline" in file_path:
+            elif "Baseline".lower() in file_path.lower():
                 filetype = "Baseline"
                 for header in headers:
                     if "SumPcpn" in header:
@@ -201,8 +202,8 @@ def process_data(file_path, filtertype):
                 row_number += 1
         determine_filter(filtertype, crop_type, filetype, new_headers)
 
-file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/Barley_BaselineTest.csv"
-# file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/CANOLA_Accumulated.csv"
+# file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/Barley_BaselineTest.csv"
+file_path = "C:/Users/Gramm/Desktop/School/spring2021/GEOG481/CANOLA_Accumulated.csv"
 process_data(file_path, filtertype)
 
   
