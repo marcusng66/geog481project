@@ -13,7 +13,7 @@ import csv
 
 all_new_rows = [] #Stores all the new rows that are going to be written to csv
 valid_labels = ["SumPcpn", "SumEGDD_C", "SumHeatD", "SumFrostD", "AvgSI", "AvgPrcnAWHC", "NDVI"] #Used to create proper headers
-filtertype = "year" #WIP as input
+filtertype = "year" #Either "year or caruid"
 
 # Function to write all the built rows into a new csv file (will overwrite, does not accumulate)
 def write(file_name, headers, current_rows):
@@ -161,7 +161,7 @@ def process_data(file_path, filtertype):
                 organized_values.extend([pcpn_values, egdd_values, heat_values, frst_values])
                 moving_averages = calculate_accum(organized_values)
                 moving_averages.extend((calculate_moving_window(avsi_values), calculate_moving_window(prcn_values)))
-            elif "Baseline".lower() in file_path.lower():
+            elif "Weekly".lower() in file_path.lower():
                 filetype = "Baseline"
                 for header in headers:
                     if "SumPcpn" in header:
