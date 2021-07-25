@@ -1,4 +1,4 @@
-"# geog481project" 
+GEOG481 Machine Learning Project
 
 This is the Repo for GEOG 481 Group 12, Oh Crop!
 
